@@ -1,0 +1,28 @@
+name: Move Issue on Comment
+ 
+on:
+  issue_comment:
+    types: [created]
+ 
+jobs:
+  move-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: Set up GitHub CLI
+        uses: cli/cli-action@v1
+ 
+      - name: Move Issue to In-Progress if Keyword Found
+        if: contains(github.event.comment.body, 'progress')
+        run: |
+          # You can change the project and column names as per your needs
+          gh issue move ${{ github.event.issue.number }} --project "mscdevops24" --column "In Progress"
+          echo "Moving to In-Progress"
+
+      - name: Move Issue to Done if Keyword Found
+        if: contains(github.event.comment.body, 'closed')
+        run: |
+          # You can change the project and column names as per your needs
+          gh issue move ${{ github.event.issue.number }} --project "mscdevops24" --column "Done"
+          echo "Moving to Done"
